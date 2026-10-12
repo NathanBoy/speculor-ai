@@ -14,7 +14,7 @@ import { normalizeFrontmatter, validateFrontmatter } from './schema.js';
  * This module is intentionally fs-only and has zero runtime dependencies.
  */
 
-/** Directory that holds all specdev artifacts (relative to a project root). */
+/** Directory that holds all speculor-ai artifacts (relative to a project root). */
 export const SPECDEV_DIR = '.specdev';
 export const SPECS_DIR = 'specs';
 export const CHANGES_DIR = 'changes';
@@ -32,7 +32,7 @@ export const FRONTMATTER_KEYS = [
 /**
  * Parse the YAML block between the `---` fences into a plain object.
  *
- * This is a deliberately small YAML subset covering what specdev specs need:
+ * This is a deliberately small YAML subset covering what speculor-ai specs need:
  * scalar keys, inline arrays (`[a, b]`), and multi-line arrays of quoted or
  * plain strings. Anything else is left as-is (best effort).
  */

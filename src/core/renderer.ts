@@ -13,7 +13,7 @@ export function renderChecklist(changeName: string, spec: SpecDoc): string {
   const lines: string[] = [
     `# 验收清单（${changeName}）`,
     '',
-    '> 由 `specdev check` 生成。逐项验证；可在每项后补充"如何验证"后交给编码 Agent 自测。',
+    '> 由 `speculor-ai check` 生成。逐项验证；可在每项后补充"如何验证"后交给编码 Agent 自测。',
     '',
   ];
   if (criteria.length === 0) {

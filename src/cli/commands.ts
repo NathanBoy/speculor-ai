@@ -37,7 +37,7 @@ async function resolveChange(root: string, name?: string): Promise<{ name: strin
   try {
     entries = (await readdir(base)).filter((e) => e !== '.gitkeep' && !e.startsWith('.'));
   } catch {
-    throw new CliError('还没有 .specdev/changes，先运行 `specdev new <name>`');
+    throw new CliError('还没有 .specdev/changes，先运行 `speculor-ai new <name>`');
   }
   let target: string;
   if (name) {
@@ -46,9 +46,9 @@ async function resolveChange(root: string, name?: string): Promise<{ name: strin
   } else if (entries.length === 1) {
     target = entries[0] as string;
   } else if (entries.length === 0) {
-    throw new CliError('还没有 change，先运行 `specdev new <name>`');
+    throw new CliError('还没有 change，先运行 `speculor-ai new <name>`');
   } else {
-    throw new CliError(`有多个 change（${entries.join('、')}），请指定：specdev <命令> <name>`);
+    throw new CliError(`有多个 change（${entries.join('、')}），请指定：speculor-ai <命令> <name>`);
   }
   return { name: target, dir: join(base, target) };
 }
@@ -135,7 +135,7 @@ export async function cmdPlan(
     planContent = await readFile(join(change.dir, 'plan.md'), 'utf8');
   } catch {
     ctx.out(
-      `✖ 缺少 ${change.name}/plan.md，先让编码 Agent 生成（可用 specdev plan --prompt 取指令）`,
+      `✖ 缺少 ${change.name}/plan.md，先让编码 Agent 生成（可用 speculor-ai plan --prompt 取指令）`,
     );
     return 1;
   }
@@ -162,7 +162,7 @@ export async function cmdTasks(
   try {
     planContent = await readFile(join(change.dir, 'plan.md'), 'utf8');
   } catch {
-    ctx.out(`✖ 缺少 ${change.name}/plan.md，先让编码 Agent 生成 plan（specdev plan --prompt）`);
+    ctx.out(`✖ 缺少 ${change.name}/plan.md，先让编码 Agent 生成 plan（speculor-ai plan --prompt）`);
     return 1;
   }
   const plan = parsePlanDoc(join(change.dir, 'plan.md'), planContent);
@@ -177,7 +177,7 @@ export async function cmdTasks(
     tasksContent = await readFile(join(change.dir, 'tasks.md'), 'utf8');
   } catch {
     ctx.out(
-      `✖ 缺少 ${change.name}/tasks.md，先让编码 Agent 生成（可用 specdev tasks --prompt 取指令）`,
+      `✖ 缺少 ${change.name}/tasks.md，先让编码 Agent 生成（可用 speculor-ai tasks --prompt 取指令）`,
     );
     return 1;
   }

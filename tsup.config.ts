@@ -1,6 +1,6 @@
 import { defineConfig } from 'tsup';
 
-// specdev ships as a CLI: a single ESM bundle with a node shebang.
+// speculor-ai ships as a CLI: a single ESM bundle with a node shebang.
 // The core modules are bundled in, so the published artifact is self-contained
 // and has zero runtime dependencies (mirroring the pico-http engineering bar).
 export default defineConfig({

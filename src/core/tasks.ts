@@ -11,7 +11,7 @@ import type { ValidationIssue } from '../types.js';
  *     - [ ] [session] 写入会话 #t2 dependsOn:[t1]
  *
  * Each task carries a module (in `[...]`), a description, a stable id (`#tN`),
- * and an optional `dependsOn:[...]`. specdev checks that every module of the
+ * and an optional `dependsOn:[...]`. speculor-ai checks that every module of the
  * plan is covered, that the dependency graph is a DAG, and produces a
  * topological order plus batches of tasks that can run in parallel.
  */

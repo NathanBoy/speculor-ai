@@ -1,4 +1,4 @@
-// ESLint 9 flat config for specdev.
+// ESLint 9 flat config for speculor-ai.
 // TypeScript-aware linting via typescript-eslint, with Prettier taking care of
 // all formatting concerns (formatting rules are turned off here).
 import js from '@eslint/js';

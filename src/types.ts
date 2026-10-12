@@ -1,5 +1,5 @@
 /**
- * Core shared types for specdev.
+ * Core shared types for speculor-ai.
  *
  * A "spec" is a Markdown document with a YAML frontmatter block that carries
  * structured, machine-checkable metadata (id, status, priority, dependencies,

@@ -14,9 +14,9 @@ const ID_PATTERN = /^[a-z0-9][a-z0-9-]*$/;
 /**
  * Minimal structural validation for a parsed frontmatter object.
  *
- * specdev intentionally avoids pulling in a full JSON-Schema runtime (ajv) to
+ * speculor-ai intentionally avoids pulling in a full JSON-Schema runtime (ajv) to
  * keep the published CLI dependency-free. This hand-rolled validator covers the
- * fields specdev itself consumes — types, enums, required-ness, and the id
+ * fields speculor-ai itself consumes — types, enums, required-ness, and the id
  * format — which is exactly the contract we need to gate a workflow on.
  *
  * The shape mirrors a JSON Schema; if a full schema validator is ever needed,
@@ -58,8 +58,8 @@ export function validateFrontmatter(value: unknown): { ok: boolean; errors: stri
  */
 export const FRONTMATTER_JSON_SCHEMA = {
   $schema: 'https://json-schema.org/draft/2020-12/schema',
-  $id: 'specdev:frontmatter',
-  title: 'specdev spec frontmatter',
+  $id: 'speculor-ai:frontmatter',
+  title: 'speculor-ai spec frontmatter',
   type: 'object',
   additionalProperties: false,
   required: ['id', 'capability'],

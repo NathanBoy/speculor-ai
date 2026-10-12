@@ -1,9 +1,9 @@
-# specdev — 技术提案（重构版 v2）
+# speculor-ai — 技术提案（重构版 v2）
 
 > **一个真正的 Spec-Driven Development（SDD）工具**：agent 无关、零依赖、TypeScript 原生。
 > 它的核心不是"管理 spec 文件"，而是——**机器如何校验 AI 的产出忠实于人的意图**。
 >
-> 人写 spec → AI 生成 plan/tasks/代码 → **specdev 逐层校验 AI 是否照着 spec 干了活** → 人确认 → 合并。
+> 人写 spec → AI 生成 plan/tasks/代码 → **speculor-ai 逐层校验 AI 是否照着 spec 干了活** → 人确认 → 合并。
 
 ---
 
@@ -11,11 +11,11 @@
 
 本版从"轻量 spec 管理工具"重构为"真正的 SDD 工具"。重构前对方案做了自检，发现三个必须对齐的矛盾，本版逐一回应：
 
-| 原矛盾                                                    | 本版的对齐                                                                                                                                                                       |
-| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **校验被高估**：结构校验（id/字段）对 AI 生成质量影响很小 | 把"校验"从**结构层**上移到**对齐层**——校验的不是文件格式，而是 **plan/tasks 是否忠实覆盖 spec**。这才是 AI 生成质量的真问题                                                      |
-| **agent 无关摊薄价值**：不做生成 = 价值变薄               | 明确分工：**AI 是生成者，specdev 是校验者 + 编排者**。agent 无关不是说"只是标准文件"，而是"specdev 永不替 AI 干活，只校验 AI 是否遵守人的意图"——这是稳定的职责边界，不是功能缺失 |
-| **产物太薄**：init/new/validate/check 只是文件 CRUD       | 引入**对齐校验**（spec→plan→tasks 覆盖率 + 依赖拓扑 + 批次划分）——有算法深度的核心，也是 showcase 的含金量锚点                                                                   |
+| 原矛盾                                                    | 本版的对齐                                                                                                                                                                               |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **校验被高估**：结构校验（id/字段）对 AI 生成质量影响很小 | 把"校验"从**结构层**上移到**对齐层**——校验的不是文件格式，而是 **plan/tasks 是否忠实覆盖 spec**。这才是 AI 生成质量的真问题                                                              |
+| **agent 无关摊薄价值**：不做生成 = 价值变薄               | 明确分工：**AI 是生成者，speculor-ai 是校验者 + 编排者**。agent 无关不是说"只是标准文件"，而是"speculor-ai 永不替 AI 干活，只校验 AI 是否遵守人的意图"——这是稳定的职责边界，不是功能缺失 |
+| **产物太薄**：init/new/validate/check 只是文件 CRUD       | 引入**对齐校验**（spec→plan→tasks 覆盖率 + 依赖拓扑 + 批次划分）——有算法深度的核心，也是 showcase 的含金量锚点                                                                           |
 
 ---
 
@@ -50,27 +50,27 @@
 ### 2.1 核心命题
 
 > **AI 会"跑偏"：它会遗漏 spec 里的功能点、会用和 spec 冲突的技术决策、会跳过验收项。**
-> specdev 的价值 = **逐层机器校验 AI 的产出（plan/tasks/清单）是否忠实于人的意图（spec）**。
+> speculor-ai 的价值 = **逐层机器校验 AI 的产出（plan/tasks/清单）是否忠实于人的意图（spec）**。
 
 它不是"帮 AI 干活"，而是"**替人监督 AI 有没有照着 spec 干活**"。
 
 ### 2.2 定位一句话
 
-> **一个零依赖、`npx` 即用的 TypeScript SDD 工具——人写 spec，AI 生成方案与任务，specdev 逐层校验对齐并门控推进。**
+> **一个零依赖、`npx` 即用的 TypeScript SDD 工具——人写 spec，AI 生成方案与任务，speculor-ai 逐层校验对齐并门控推进。**
 
 ### 2.3 谁生成 / 谁校验（职责边界）
 
 | 角色       | 谁                                                     | 做什么                                              |
 | ---------- | ------------------------------------------------------ | --------------------------------------------------- |
 | **生成者** | 任意编码 AI（Claude Code / Copilot / Cursor / Codex…） | 读 spec → 产出 plan.md / tasks.md / 代码            |
-| **校验者** | specdev                                                | 定义工件契约 + 校验 AI 产出是否覆盖 spec + 门控推进 |
+| **校验者** | speculor-ai                                            | 定义工件契约 + 校验 AI 产出是否覆盖 spec + 门控推进 |
 | **仲裁者** | 人                                                     | 每个阶段出口确认（门控）                            |
 
 ### 2.4 差异化对比表
 
-| 维度       | specdev                                  | Spec Kit           | OpenSpec       |
+| 维度       | speculor-ai                              | Spec Kit           | OpenSpec       |
 | ---------- | ---------------------------------------- | ------------------ | -------------- |
-| 安装       | `npx specdev`（Node 原生）               | Python `uv`/`pip`  | Rust binary    |
+| 安装       | `npx speculor-ai`（Node 原生）           | Python `uv`/`pip`  | Rust binary    |
 | Agent 依赖 | **无关**（AI 是插拔的生成者）            | 绑定 slash command | 绑定特定 agent |
 | 核心差异化 | **spec→plan→tasks 逐层对齐校验**         | 门控治理           | 状态/diff 分离 |
 | 校验对象   | AI 的产出是否忠实于 spec（机器可判）     | 无机器校验         | 无机器校验     |
@@ -81,20 +81,20 @@
 
 ## 3. 核心闭环与命令语义
 
-### 3.1 SDD 闭环（specdev 覆盖的部分）
+### 3.1 SDD 闭环（speculor-ai 覆盖的部分）
 
 ```
 spec(需求) ─► plan(技术方案) ─► tasks(任务拆解) ─► implement(实现) ─► verify(验收)
-    ▲  specdev 契约+校验      ▲  specdev 对齐校验   ▲ AI 完成    ▲ specdev check
+    ▲  speculor-ai 契约+校验      ▲  speculor-ai 对齐校验   ▲ AI 完成    ▲ speculor-ai check
 ```
 
-- **specdev 管**：spec / plan / tasks 的契约定义 + 逐层对齐校验 + 门控 + 验收清单。
+- **speculor-ai 管**：spec / plan / tasks 的契约定义 + 逐层对齐校验 + 门控 + 验收清单。
 - **AI 管**：读 spec 生成 plan、读 plan 生成 tasks、按 tasks 写代码。
-- **specdev 永远不生成 plan/tasks 内容**——它只校验，所以零依赖、不绑 LLM、agent 无关。
+- **speculor-ai 永远不生成 plan/tasks 内容**——它只校验，所以零依赖、不绑 LLM、agent 无关。
 
 ### 3.2 命令语义（MVP 六个命令）
 
-| 命令         | 输入                      | specdev 做什么（核心）                                                                                      | 校验的技术含金量                 |
+| 命令         | 输入                      | speculor-ai 做什么（核心）                                                                                  | 校验的技术含金量                 |
 | ------------ | ------------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------- |
 | `init`       | —                         | 生成 `.specdev/` 脚手架（constitution、specs/、changes/、模板）                                             | —                                |
 | `new <name>` | —                         | 建 change，产出带 frontmatter + 三态示例的 spec.md 模板                                                     | —                                |
@@ -128,7 +128,7 @@ spec(需求) ─► plan(技术方案) ─► tasks(任务拆解) ─► impleme
 
 ```mermaid
 graph TD
-    subgraph CLI["specdev CLI (npx)"]
+    subgraph CLI["speculor-ai CLI (npx)"]
         init["init 脚手架"]
         new["new 新建 change"]
         validate["validate 校验 spec"]
@@ -187,9 +187,9 @@ graph TD
 │   └── <capability>/spec.md
 └── changes/<name>/
     ├── spec.md              # 需求（what/why + 三态 FP + acceptanceCriteria）
-    ├── plan.md              # 技术方案（AI 产出，specdev 校验对齐）
-    ├── tasks.md             # 任务清单（AI 产出，specdev 校验完备 + 依赖）
-    └── checklist.md         # 验收清单（由 specdev check 生成）
+    ├── plan.md              # 技术方案（AI 产出，speculor-ai 校验对齐）
+    ├── tasks.md             # 任务清单（AI 产出，speculor-ai 校验完备 + 依赖）
+    └── checklist.md         # 验收清单（由 speculor-ai check 生成）
 ```
 
 ### 5.2 spec.md 契约（frontmatter + 三态）
@@ -219,10 +219,10 @@ acceptanceCriteria:
 （包含 / 不包含）
 ```
 
-### 5.3 plan.md / tasks.md 契约（specdev 校验的对象）
+### 5.3 plan.md / tasks.md 契约（speculor-ai 校验的对象）
 
-- **plan.md**：frontmatter 声明 `spec: <id>`（对齐哪个 spec）、`modules: [...]`、`decisions: [...]`；正文按模块给出方案。**specdev 校验其覆盖 spec 的 FP/验收项**。
-- **tasks.md**：每个任务 `- [ ] (module) 描述` 绑定 plan 模块，依赖用 `dependsOn: task-id` 声明。**specdev 校验完备性 + 拓扑 + 批次**。
+- **plan.md**：frontmatter 声明 `spec: <id>`（对齐哪个 spec）、`modules: [...]`、`decisions: [...]`；正文按模块给出方案。**speculor-ai 校验其覆盖 spec 的 FP/验收项**。
+- **tasks.md**：每个任务 `- [ ] (module) 描述` 绑定 plan 模块，依赖用 `dependsOn: task-id` 声明。**speculor-ai 校验完备性 + 拓扑 + 批次**。
 
 ---
 
@@ -230,7 +230,7 @@ acceptanceCriteria:
 
 每个阶段出口统一三选一（CLI 确认实现，不依赖任何 AI 的私有机制）：
 
-| 选项       | 含义       | specdev 行为                     |
+| 选项       | 含义       | speculor-ai 行为                 |
 | ---------- | ---------- | -------------------------------- |
 | 继续       | 认可产出   | 进入下一阶段                     |
 | 暂停       | 先停       | 记录进度 + 恢复点，停止          |
@@ -252,7 +252,7 @@ acceptanceCriteria:
 | **校验引擎** | **自写**：alignment / dependency / coverage | 这是差异化核心，不是复用 ajv 能替代的 |
 | YAML 解析    | 自写 frontmatter 子集                       | 避免引入依赖                          |
 | 测试         | vitest（+ 覆盖率门槛）                      | 与 pico-http 一致                     |
-| 分发         | npm 发布 `specdev` + `npx`                  | 前端零摩擦                            |
+| 分发         | npm 发布 `speculor-ai` + `npx`              | 前端零摩擦                            |
 | 工程链       | 复用 pico-http：lint/prettier/coverage/CI   | 成熟经验                              |
 
 > **取舍**：`alignment`/`dependency`/`coverage` 是项目的算法核心，也是 showcase 的技术含金量。它们**必须是自写的**——不是"能不能用现成库"的问题，而是"这正是这个项目存在的理由"。
@@ -284,9 +284,9 @@ acceptanceCriteria:
 
 ## 9. 风险与边界
 
-- **对齐校验的前提是"AI 会产出结构化 plan/tasks"**：为此 specdev 提供明确的 plan/tasks 契约 + 生成指令，把"任意 AI 产出"规范到可校验的形态。这是契约设计的工作，不是假设。
-- **对齐是近似不是完美**：FP 与 plan 的匹配允许人工仲裁（门控），specdev 给出机器判定 + 报告，最终由人确认——避免"机器过度自信"。
-- **不与 Spec Kit 正面竞争**：Spec Kit 强在门控治理；specdev 错位在"**机器校验 AI 产出忠实度**"，这是空白。
+- **对齐校验的前提是"AI 会产出结构化 plan/tasks"**：为此 speculor-ai 提供明确的 plan/tasks 契约 + 生成指令，把"任意 AI 产出"规范到可校验的形态。这是契约设计的工作，不是假设。
+- **对齐是近似不是完美**：FP 与 plan 的匹配允许人工仲裁（门控），speculor-ai 给出机器判定 + 报告，最终由人确认——避免"机器过度自信"。
+- **不与 Spec Kit 正面竞争**：Spec Kit 强在门控治理；speculor-ai 错位在"**机器校验 AI 产出忠实度**"，这是空白。
 - **格式一旦发布难回退**：spec/plan/tasks 契约 + 三态是外部契约，V1 尽量稳定。
 - **三态要克制**：只用于需区分事实/假设的 FP 和验收项，不要求全文逐句打标。
 

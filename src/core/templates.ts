@@ -29,7 +29,7 @@ const CONSTITUTION_TEMPLATE = `# 项目原则（constitution）
 const SPECS_DIR = 'specs';
 const CHANGES_DIR = 'changes';
 
-/** Files created by `specdev init`. */
+/** Files created by `speculor-ai init`. */
 export function initTemplates(): InitFile[] {
   return [
     { path: 'constitution.md', content: CONSTITUTION_TEMPLATE },
@@ -39,7 +39,7 @@ export function initTemplates(): InitFile[] {
 }
 
 /**
- * The `spec.md` scaffold produced by `specdev new <name>`.
+ * The `spec.md` scaffold produced by `speculor-ai new <name>`.
  * Includes frontmatter plus example tri-state feature points, so an AI agent
  * can fill it in from a PRD without guessing the contract.
  */

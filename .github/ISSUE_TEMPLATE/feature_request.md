@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for specdev
+about: Suggest an idea for speculor-ai
 title: '[feature] '
 labels: enhancement
 assignees: ''
@@ -12,11 +12,11 @@ A clear and concise description of the problem, and who it affects.
 
 ## Proposed behaviour
 
-What you'd like specdev to do.
+What you'd like speculor-ai to do.
 
 ## Design considerations
 
-Any constraints you think matter (keep in mind specdev is dependency-free and
+Any constraints you think matter (keep in mind speculor-ai is dependency-free and
 agent-agnostic — see CONTRIBUTING.md).
 
 ## Alternative approaches

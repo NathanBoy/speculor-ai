@@ -18,7 +18,7 @@ let out: string[];
 let ctx: CommandContext;
 
 beforeEach(async () => {
-  root = await mkdtemp(join(tmpdir(), 'specdev-test-'));
+  root = await mkdtemp(join(tmpdir(), 'speculor-ai-test-'));
   out = [];
   ctx = { root, out: (l) => out.push(l) };
 });
@@ -63,7 +63,7 @@ const TASKS_OK = `## 任务
 - [ ] [session] 写入会话 #t2 dependsOn:[t1]
 `;
 
-describe('end-to-end specdev flow', () => {
+describe('end-to-end speculor-ai flow', () => {
   it('runs init → new → validate → plan → tasks → check', async () => {
     expect(await cmdInit(ctx, false)).toBe(0);
     expect(out.at(-1)).toContain('.specdev/');

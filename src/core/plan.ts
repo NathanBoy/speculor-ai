@@ -4,7 +4,7 @@ import { splitFrontmatter } from './loader.js';
 /**
  * spec → plan alignment checking.
  *
- * An AI agent reads a spec and produces a `plan.md`. specdev's job is to answer
+ * An AI agent reads a spec and produces a `plan.md`. speculor-ai's job is to answer
  * one question: **does the plan faithfully cover the spec?** It computes a
  * coverage ratio over the spec's confirmed/default feature points and its
  * acceptance criteria, using two channels so it does not over-depend on the

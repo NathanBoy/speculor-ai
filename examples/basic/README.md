@@ -1,6 +1,6 @@
-# example: basic specdev workflow
+# example: basic speculor-ai workflow
 
-A minimal, self-contained project showing the `.specdev/` artifacts that specdev
+A minimal, self-contained project showing the `.specdev/` artifacts that speculor-ai
 produces and validates, for a fictional "auth-login" feature.
 
 ```
@@ -8,24 +8,24 @@ examples/basic/.specdev/
 ├── constitution.md
 └── changes/auth-login/
     ├── spec.md        # 需求（frontmatter + 三态功能点 + acceptanceCriteria）
-    ├── plan.md        # 技术方案（AI 产出，specdev 校验对齐）
-    ├── tasks.md       # 任务清单（AI 产出，specdev 校验完备/依赖/批次）
-    └── checklist.md   # 验收清单（由 specdev check 生成）
+    ├── plan.md        # 技术方案（AI 产出，speculor-ai 校验对齐）
+    ├── tasks.md       # 任务清单（AI 产出，speculor-ai 校验完备/依赖/批次）
+    └── checklist.md   # 验收清单（由 speculor-ai check 生成）
 ```
 
 ## Try it
 
-From this directory, run the built CLI (or `npx specdev` once published):
+From this directory, run the built CLI (or `npx speculor-ai` once published):
 
 ```bash
-npx specdev validate                # 校验 spec：结构 + 三态门控
-npx specdev plan --prompt           # 取"生成方案"指令给任意编码 Agent
-npx specdev plan                    # 校验 plan 是否覆盖 spec（覆盖率）
-npx specdev tasks                   # 校验任务完备 + 依赖无环 + 建议批次
-npx specdev check                   # 从 acceptanceCriteria 生成验收清单
+npx speculor-ai validate                # 校验 spec：结构 + 三态门控
+npx speculor-ai plan --prompt           # 取"生成方案"指令给任意编码 Agent
+npx speculor-ai plan                    # 校验 plan 是否覆盖 spec（覆盖率）
+npx speculor-ai tasks                   # 校验任务完备 + 依赖无环 + 建议批次
+npx speculor-ai check                   # 从 acceptanceCriteria 生成验收清单
 ```
 
-Example output of `specdev tasks`:
+Example output of `speculor-ai tasks`:
 
 ```
 ── 任务报告（4 个任务）──
@@ -36,5 +36,5 @@ Example output of `specdev tasks`:
    …
 ```
 
-> The `checklist.md` here is what `specdev check` produces. Change the spec's
+> The `checklist.md` here is what `speculor-ai check` produces. Change the spec's
 > `acceptanceCriteria` and re-run to regenerate it.

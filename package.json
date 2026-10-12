@@ -1,10 +1,10 @@
 {
-  "name": "specdev",
+  "name": "speculor-ai",
   "version": "0.1.0",
   "description": "A zero-dependency, type-safe spec-driven development toolkit: turn ideas into machine-checkable specs, and specs into verifiable checklists for any coding agent.",
   "type": "module",
   "bin": {
-    "specdev": "./dist/cli.js"
+    "speculor-ai": "./dist/cli.js"
   },
   "files": [
     "dist",
@@ -38,12 +38,12 @@
   "author": "NathanBoy",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NathanBoy/specdev.git"
+    "url": "git+https://github.com/NathanBoy/speculor-ai.git"
   },
   "bugs": {
-    "url": "https://github.com/NathanBoy/specdev/issues"
+    "url": "https://github.com/NathanBoy/speculor-ai/issues"
   },
-  "homepage": "https://github.com/NathanBoy/specdev#readme",
+  "homepage": "https://github.com/NathanBoy/speculor-ai#readme",
   "license": "MIT",
   "engines": {
     "node": ">=18"

@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a bug in specdev
+about: Report a bug in speculor-ai
 title: '[bug] '
 labels: bug
 assignees: ''
@@ -26,7 +26,7 @@ What actually happened (paste the command output / stack trace).
 
 ## Environment
 
-- specdev version:
+- speculor-ai version:
 - Node version:
 - OS:
 

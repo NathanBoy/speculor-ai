@@ -11,8 +11,8 @@ describe('parseTasks', () => {
   it('parses tasks from the 任务 section', () => {
     const doc = parseTasks('/p/tasks.md', BODY);
     expect(doc.tasks).toHaveLength(3);
-    expect(doc.tasks[0]).toMatchObject({ id: 't1', module: 'auth', dependsOn: [] });
-    expect(doc.tasks[1].dependsOn).toEqual(['t1']);
+    expect(doc.tasks[0]!).toMatchObject({ id: 't1', module: 'auth', dependsOn: [] });
+    expect(doc.tasks[1]!.dependsOn).toEqual(['t1']);
   });
 
   it('ignores non-task sections and assigns fallback ids', () => {
@@ -21,7 +21,7 @@ describe('parseTasks', () => {
       '## 其他\n- [ ] [x] not a task\n## 任务\n- [ ] [auth] do #a',
     );
     expect(doc.tasks).toHaveLength(1);
-    expect(doc.tasks[0].id).toBe('a');
+    expect(doc.tasks[0]!.id).toBe('a');
   });
 });
 

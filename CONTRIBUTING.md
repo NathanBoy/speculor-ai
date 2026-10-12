@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for considering contributing to specdev! This project is small, focused,
+Thanks for considering contributing to speculor-ai! This project is small, focused,
 and deliberately dependency-free. Please read this before opening a PR.
 
 ## Development setup
@@ -26,15 +26,15 @@ The CI workflow runs the same commands on Node 18 / 20 / 22.
 
 ## Design principles
 
-specdev has a few hard constraints that we ask contributors to respect:
+speculor-ai has a few hard constraints that we ask contributors to respect:
 
 1. **Zero runtime dependencies.** The published CLI must remain dependency-free.
    Prefer hand-rolled, small solutions (like the frontmatter parser and the
    alignment checker) over pulling in a library.
-2. **specdev is a verifier, not a generator.** It never produces plan/tasks
+2. **speculor-ai is a verifier, not a generator.** It never produces plan/tasks
    content for the AI — it checks whether AI output faithfully covers a spec.
    Keep new commands aligned with this role.
-3. **Agent-agnostic.** specdev must not bind to any specific coding agent or
+3. **Agent-agnostic.** speculor-ai must not bind to any specific coding agent or
    IDE. It works with plain files that any agent can read.
 4. **Focus.** Each subcommand does one thing. Avoid scope creep; if a feature
    grows large, discuss it in an issue first.

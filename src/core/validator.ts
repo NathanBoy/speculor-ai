@@ -76,7 +76,7 @@ export function validateAll(docs: SpecDoc[], options: ValidateOptions = {}): Val
       issues.push({
         severity: 'warning',
         file: doc.path,
-        message: 'no acceptanceCriteria declared — `specdev check` will have nothing to verify',
+        message: 'no acceptanceCriteria declared — `speculor-ai check` will have nothing to verify',
       });
     }
     if (doc.items.length === 0) {
