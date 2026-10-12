@@ -27,6 +27,14 @@ speculor-ai **不是"帮 AI 干活"，而是"替人监督 AI 有没有照着 spe
 | **校验者** | **speculor-ai**                                        | 定义工件契约 + 校验 AI 产出覆盖 spec + 门控推进 |
 | 仲裁者     | 你                                                     | 每个阶段出口确认                                |
 
+## 核心路径
+
+从需求到验收，speculor-ai 介入的是**中间的四个转换点**（spec 结构化、spec→plan 对齐、plan→tasks 完备、验收清单），每一层出口都是**人确认的门控**：
+
+<p align="center">
+  <img src="assets/core-pipeline.svg" alt="核心路径 pipeline" width="88%" />
+</p>
+
 ## 为什么 agent 无关
 
 - **AI 工具迭代极快，绑死 = 高风险**：把工作流编死在单家（如 Claude Code 的 Plugin/Hook），换工具整套作废。speculor-ai 只依赖"文件和校验"，永不失效。

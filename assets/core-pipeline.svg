@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="1250" viewBox="0 0 760 1250" font-family="'PingFang SC','Segoe UI',Arial,sans-serif">
+  <!-- 核心闭环带 -->
+  <rect x="40" y="16" width="680" height="44" rx="10" fill="rgba(139,200,234,0.15)"/>
+  <text x="400" y="45" text-anchor="middle" font-size="15" font-weight="600" fill="#0E6BA8">核心闭环：spec → plan → tasks → implement → verify</text>
+
+  <!-- 卡1 准备 -->
+  <rect x="40" y="76" width="680" height="168" rx="14" fill="#FFFFFF" stroke="rgba(0,0,0,0.08)"/>
+  <circle cx="62" cy="104" r="12" fill="#8BC8EA"/>
+  <text x="62" y="109" text-anchor="middle" font-size="12" font-weight="700" fill="#0E3560">①</text>
+  <text x="82" y="109" font-size="14" font-weight="600" fill="#1A1B1C">准备 · </text>
+  <text x="122" y="109" font-size="13" fill="#1A1B1C">init / new</text>
+  <text x="696" y="109" text-anchor="end" font-size="11" fill="#6B7280">人 + AI（辅助起草）</text>
+  <text x="56" y="134" font-size="13" fill="#4A5568"><tspan font-weight="600" fill="#1A1B1C">输入</tspan>：项目根、PRD</text>
+  <text x="56" y="160" font-size="13" fill="#4A5568"><tspan font-weight="600" fill="#1A1B1C">产物</tspan>：spec.md —— 三态功能点 ✅/🟡/⚠️ + 验收标准 + 范围</text>
+  <text x="56" y="188" font-size="12.5" fill="#0E6BA8">◆ spec 质量由「写需求的人」负责，AI 只能起草、人确认</text>
+
+  <!-- 箭头 -->
+  <line x1="400" y1="248" x2="400" y2="266" stroke="#8BC8EA" stroke-width="2"/>
+  <polygon points="400,274 394,262 406,262" fill="#8BC8EA"/>
+
+  <!-- 卡2 validate -->
+  <rect x="40" y="274" width="680" height="168" rx="14" fill="#FFFFFF" stroke="rgba(0,0,0,0.08)"/>
+  <circle cx="62" cy="302" r="12" fill="#8BC8EA"/>
+  <text x="62" y="307" text-anchor="middle" font-size="12" font-weight="700" fill="#0E3560">②</text>
+  <text x="82" y="307" font-size="14" font-weight="600" fill="#1A1B1C">校验 spec · </text>
+  <text x="130" y="307" font-size="13" fill="#1A1B1C">validate</text>
+  <text x="696" y="307" text-anchor="end" font-size="11" fill="#6B7280">speculor-ai（结构校验）</text>
+  <text x="56" y="332" font-size="13" fill="#4A5568"><tspan font-weight="600" fill="#1A1B1C">输入</tspan>：spec.md</text>
+  <text x="56" y="358" font-size="13" fill="#4A5568"><tspan font-weight="600" fill="#1A1B1C">产物</tspan>：校验报告（结构 / id 唯一 / dependsOn 引用 / 三态）</text>
+  <text x="56" y="386" font-size="12.5" fill="#C77D00"><tspan font-weight="600">门控</tspan>｜⚠️ 待确认项 → 阻塞，除非确认</text>
+
+  <!-- 箭头 -->
+  <line x1="400" y1="446" x2="400" y2="464" stroke="#8BC8EA" stroke-width="2"/>
+  <polygon points="400,472 394,460 406,460" fill="#8BC8EA"/>
+
+  <!-- 卡3 plan -->
+  <rect x="40" y="472" width="680" height="168" rx="14" fill="#FFFFFF" stroke="rgba(0,0,0,0.08)"/>
+  <circle cx="62" cy="500" r="12" fill="#8BC8EA"/>
+  <text x="62" y="505" text-anchor="middle" font-size="12" font-weight="700" fill="#0E3560">③</text>
+  <text x="82" y="505" font-size="14" font-weight="600" fill="#1A1B1C">方案对齐 · </text>
+  <text x="130" y="505" font-size="13" fill="#1A1B1C">plan</text>
+  <text x="696" y="505" text-anchor="end" font-size="11" fill="#6B7280">AI 生成 → 工具校验</text>
+  <text x="56" y="530" font-size="13" fill="#4A5568"><tspan font-weight="600" fill="#1A1B1C">输入</tspan>：spec.md；--prompt 给 AI 生成指令</text>
+  <text x="56" y="556" font-size="13" fill="#4A5568"><tspan font-weight="600" fill="#1A1B1C">AI 产出</tspan>：plan.md（frontmatter spec/modules/covers + 正文方案）</text>
+  <text x="56" y="582" font-size="13" fill="#4A5568"><tspan font-weight="600" fill="#1A1B1C">产物</tspan>：对齐报告 —— 每项覆盖 + 置信度 + 证据位置（章节/行号/摘录）</text>
+  <text x="56" y="610" font-size="12.5" fill="#C77D00"><tspan font-weight="600">门控</tspan>｜漏覆盖 / 需人工确认 → 阻塞，附证据</text>
+
+  <!-- 箭头 -->
+  <line x1="400" y1="644" x2="400" y2="662" stroke="#8BC8EA" stroke-width="2"/>
+  <polygon points="400,670 394,658 406,658" fill="#8BC8EA"/>
+
+  <!-- 卡4 tasks -->
+  <rect x="40" y="670" width="680" height="168" rx="14" fill="#FFFFFF" stroke="rgba(0,0,0,0.08)"/>
+  <circle cx="62" cy="698" r="12" fill="#8BC8EA"/>
+  <text x="62" y="703" text-anchor="middle" font-size="12" font-weight="700" fill="#0E3560">④</text>
+  <text x="82" y="703" font-size="14" font-weight="600" fill="#1A1B1C">任务完备 · </text>
+  <text x="130" y="703" font-size="13" fill="#1A1B1C">tasks</text>
+  <text x="696" y="703" text-anchor="end" font-size="11" fill="#6B7280">AI 生成 → 工具校验</text>
+  <text x="56" y="728" font-size="13" fill="#4A5568"><tspan font-weight="600" fill="#1A1B1C">输入</tspan>：plan.md；--prompt 给 AI 拆任务指令</text>
+  <text x="56" y="754" font-size="13" fill="#4A5568"><tspan font-weight="600" fill="#1A1B1C">AI 产出</tspan>：tasks.md（结构化任务数组 + dependsOn）</text>
+  <text x="56" y="780" font-size="13" fill="#4A5568"><tspan font-weight="600" fill="#1A1B1C">产物</tspan>：任务报告 —— 覆盖 plan 全部模块 + 依赖拓扑序 + 并行批次</text>
+  <text x="56" y="808" font-size="12.5" fill="#C77D00"><tspan font-weight="600">门控</tspan>｜漏任务 / 依赖有环 → 阻塞</text>
+
+  <!-- 箭头 -->
+  <line x1="400" y1="842" x2="400" y2="860" stroke="#8BC8EA" stroke-width="2"/>
+  <polygon points="400,868 394,856 406,856" fill="#8BC8EA"/>
+
+  <!-- 卡5 check -->
+  <rect x="40" y="868" width="680" height="168" rx="14" fill="#FFFFFF" stroke="rgba(0,0,0,0.08)"/>
+  <circle cx="62" cy="896" r="12" fill="#8BC8EA"/>
+  <text x="62" y="901" text-anchor="middle" font-size="12" font-weight="700" fill="#0E3560">⑤</text>
+  <text x="82" y="901" font-size="14" font-weight="600" fill="#1A1B1C">验收清单 · </text>
+  <text x="130" y="901" font-size="13" fill="#1A1B1C">check</text>
+  <text x="696" y="901" text-anchor="end" font-size="11" fill="#6B7280">speculor-ai（生成）</text>
+  <text x="56" y="926" font-size="13" fill="#4A5568"><tspan font-weight="600" fill="#1A1B1C">输入</tspan>：spec.md（acceptanceCriteria）</text>
+  <text x="56" y="952" font-size="13" fill="#4A5568"><tspan font-weight="600" fill="#1A1B1C">产物</tspan>：checklist.md —— 每项带优先级 + 验证方式</text>
+
+  <!-- 箭头 -->
+  <line x1="400" y1="1040" x2="400" y2="1058" stroke="#8BC8EA" stroke-width="2"/>
+  <polygon points="400,1066 394,1054 406,1054" fill="#8BC8EA"/>
+
+  <!-- 卡6 实现+验收 -->
+  <rect x="40" y="1066" width="680" height="168" rx="14" fill="rgba(139,200,234,0.10)" stroke="rgba(139,200,234,0.5)"/>
+  <circle cx="62" cy="1094" r="12" fill="#52C41A"/>
+  <text x="62" y="1099" text-anchor="middle" font-size="12" font-weight="700" fill="#FFFFFF">⑥</text>
+  <text x="82" y="1099" font-size="14" font-weight="600" fill="#1A1B1C">实现 + 验收（工具之外的环节）</text>
+  <text x="696" y="1099" text-anchor="end" font-size="11" fill="#6B7280">AI 写代码 / 人自测</text>
+  <text x="56" y="1124" font-size="13" fill="#4A5568">AI 按 tasks 写代码；人按 checklist 逐项自测勾选</text>
+  <text x="56" y="1152" font-size="12.5" fill="#0E6BA8">◆ speculor-ai 不校验代码 —— 只负责把「需求 → 方案 → 任务 → 验收」的前置链路关好</text>
+</svg>

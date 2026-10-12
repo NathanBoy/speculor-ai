@@ -33,6 +33,16 @@ speculor-ai is **not here to "help the AI do work" — it's here to
 | **Verifier** | **speculor-ai**                                         | Defines the artifact contract + checks AI output covers the spec + gates progress |
 | Arbitrator   | You                                                     | Confirms each stage before it moves forward                                       |
 
+## Core path
+
+From requirement to acceptance, speculor-ai sits at the **four conversion points**
+(spec structuring, spec→plan alignment, plan→tasks completeness, acceptance
+list), and every stage exits through a **human-confirmed gate**:
+
+<p align="center">
+  <img src="assets/core-pipeline.en.svg" alt="Core path pipeline" width="88%" />
+</p>
+
 ## Why agent-agnostic
 
 - **AI tooling churns fast; being locked in is a risk**: wiring your workflow
