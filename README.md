@@ -35,6 +35,38 @@ speculor-ai **不是"帮 AI 干活"，而是"替人监督 AI 有没有照着 spe
 
 因为 agent 无关，speculor-ai 的集成方式**不看你用哪个工具**——统一两步：**① 让 AI 知道有这套流程 ② 在终端 / CI 跑 speculor-ai 命令**。
 
+## 边界（它不做什么）
+
+明确"不做什么"和"做什么"同样重要：
+
+- **不生成方案 / 任务**：speculor-ai 是**校验者**，不是生成者。plan/tasks 内容由你的编码 AI 产出，它只检查产出是否忠实于 spec。
+- **不做代码脚手架 / 代码生成**：不碰源码，只读写 `.specdev/` 下的规范文件。
+- **不绑定任何 agent / IDE**：只用普通 Markdown 文件，谁都能读（见上节）。
+- **不是代码仓库管理工具**：不管分支、合入、发版，那是 Git 与 CI 的职责。
+- **不是通用静态分析器**：只针对"spec → plan → tasks"这条 SDD 链路做对齐与完备性检查。
+
+## 架构
+
+```mermaid
+flowchart LR
+    A[constitution.md] --> V
+    S[spec.md] --> V[validate]
+    V -->|通过| PL[plan --prompt]
+    PL --> AI[编码 Agent]
+    AI --> P[plan.md]
+    P --> PC[plan 对齐校验<br/>covers + 文本匹配]
+    P --> T[tasks --prompt]
+    T --> AI
+    AI --> TK[tasks.md]
+    TK --> TC[tasks 校验<br/>完备 + 拓扑 + 批次]
+    PC -->|覆盖率| CHK[check → checklist.md]
+    TC --> CHK
+```
+
+- `core/`：零依赖核心（schema / loader / validator / plan / tasks / renderer）
+- `cli/`：六条子命令的薄壳，全部逻辑在 core
+- 校验失败以 **exit code** 表达，可在终端、CI、git hook 里直接当门禁用
+
 ## 安装
 
 ```bash
@@ -213,7 +245,10 @@ npx speculor-ai check      # ✔ 生成验收清单
 
 - [技术提案（PROPOSAL.md）](./PROPOSAL.md) — 定位、架构、对齐校验算法、里程碑
 - [CHANGELOG.md](./CHANGELOG.md)
-- [CONTRIBUTING.md](./CONTRIBUTING.md)
+- [CONTRIBUTING.md](./CONTRIBUTING.md) — 开发流程 + 四项设计原则
+- [SECURITY.md](./SECURITY.md) — 漏洞报告政策
+- [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
+- [LICENSE](./LICENSE) — MIT
 
 ## 许可证
 
