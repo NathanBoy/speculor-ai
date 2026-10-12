@@ -1,0 +1,63 @@
+{
+  "name": "specdev",
+  "version": "0.1.0",
+  "description": "A zero-dependency, type-safe spec-driven development toolkit: turn ideas into machine-checkable specs, and specs into verifiable checklists for any coding agent.",
+  "type": "module",
+  "bin": {
+    "specdev": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepublishOnly": "npm run build && npm run test"
+  },
+  "keywords": [
+    "spec",
+    "spec-driven",
+    "sdd",
+    "development",
+    "cli",
+    "ai",
+    "code-generation",
+    "checklist",
+    "typescript"
+  ],
+  "author": "NathanBoy",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NathanBoy/specdev.git"
+  },
+  "bugs": {
+    "url": "https://github.com/NathanBoy/specdev/issues"
+  },
+  "homepage": "https://github.com/NathanBoy/specdev#readme",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@types/node": "^20.19.43",
+    "@vitest/coverage-v8": "^2.1.9",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^9.1.2",
+    "prettier": "^3.9.10",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.71.1",
+    "vitest": "^2.1.8"
+  }
+}
