@@ -258,29 +258,6 @@ confirmation status — `✅` confirmed / `🟡` default plan / `⚠️` pending
 (blocks the gate). This makes "what is fact vs. what is assumption" explicit
 and traceable.
 
-## Dogfooding
-
-This project uses **speculor-ai to manage its own iterations**. The
-`.specdev/` at the repo root holds the v0.1.0 planning artifacts
-(constitution + spec/plan/tasks + checklist), all validated by speculor-ai
-itself:
-
-```bash
-npx speculor-ai validate   # ✔ 1 spec validated
-npx speculor-ai plan       # ✔ 100% coverage
-npx speculor-ai tasks      # ✔ acyclic deps, 4 tasks / 4 batches
-npx speculor-ai check      # ✔ checklist generated
-```
-
-Two real problems it caught while planning its own next version:
-
-- the planned `id: v0.1.0` contained a `.`, rejected by the schema → renamed `v0-1-0`;
-- the plan's `covers` wording drifted from the feature points → 50% coverage,
-  then 100% once aligned.
-
-> Trusting your own tool to manage your own project is the most direct
-> endorsement of "supervising AI output fidelity".
-
 ## Documentation
 
 - [Technical proposal (PROPOSAL.md)](./PROPOSAL.md) — positioning, architecture, alignment algorithm, milestones
