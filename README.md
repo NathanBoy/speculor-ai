@@ -5,6 +5,11 @@
 
 [![CI](https://github.com/NathanBoy/speculor-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/NathanBoy/speculor-ai/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm](https://img.shields.io/npm/v/speculor-ai)](https://www.npmjs.com/package/speculor-ai)
+
+<p align="center">
+  <img src="assets/demo.gif" alt="speculor-ai demo" width="80%" />
+</p>
 
 ---
 
@@ -183,6 +188,26 @@ steps:
 ```
 
 **三态标记**：spec 里每个功能点标记其确认状态——`✅` 已确认 / `🟡` 默认方案 / `⚠️` 待确认（阻塞门禁）。让"哪些是事实、哪些是假设"显式可追溯。
+
+## Dogfooding（自举）
+
+本项目用 **speculor-ai 管理自己的迭代**。仓库根 `.specdev/` 里就是 v0.1.0 的
+规划工件（constitution + spec/plan/tasks + checklist），且全部通过
+`speculor-ai` 自身校验：
+
+```bash
+npx speculor-ai validate   # ✔ 校验通过（1 个 spec）
+npx speculor-ai plan       # ✔ 覆盖率 100%
+npx speculor-ai tasks      # ✔ 依赖无环，4 个任务 / 4 批
+npx speculor-ai check      # ✔ 生成验收清单
+```
+
+开发中被自己抓到的两个真实问题：
+
+- 规划 `id: v0.1.0` 含 `.`，被 schema 拦截 → 改为 `v0-1-0`；
+- plan 的 `covers` 与功能点措辞不齐 → 覆盖率 50%，补全后 100%。
+
+> 敢用自己的工具管理自己，是对「监督 AI 产出忠实度」最直接的背书。
 
 ## 文档
 
