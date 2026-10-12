@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.0](https://github.com/NathanBoy/speculor-ai/compare/v0.0.1...v0.1.0) (2026-10-12)
+
+
+### Features
+
+* add dogfooding spec and release automation ([6a8ada4](https://github.com/NathanBoy/speculor-ai/commit/6a8ada444364e2da3baf350a9dc131f1ef871389))
+* add evidence chain to plan alignment ([fd95c15](https://github.com/NathanBoy/speculor-ai/commit/fd95c1540342aaa6ef3869afcf48949e5404510e))
+
 ## [0.0.1] - 2026-10-12
 
 ### Added
