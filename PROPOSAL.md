@@ -293,6 +293,8 @@ acceptanceCriteria:
 
 ### 8.5.1 证据链（Evidence Chain）— 最高杠杆，先做
 
+> **状态：已评审并实施（v0.2）**，详见 `docs/evidence-chain.md` 与 `docs/evidence-chain-review.md`。
+
 从"机器判定"升级为"**机器判定 + 可复核证据**"：
 
 - 每项覆盖必须产出它在 plan 中的**证据位置**（段落定位 / 行号 / 一句摘录）；

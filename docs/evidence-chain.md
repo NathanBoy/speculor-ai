@@ -2,103 +2,96 @@
 
 > 对齐校验可信度演进的第一步（PROPOSAL §8.5.1）。
 > 目标：把 `plan` 对齐校验从"机器判定"升级为"**机器判定 + 可复核证据**"。
-> 状态：技术方案（待评审）。版本：0.1。
+> 状态：**已评审并实施（v0.2）**。本版已吸收独立评审（`docs/evidence-chain-review.md`）的 P0/P1 修正。
 
 ---
 
 ## 1. 背景与问题
 
-当前 `plan` 对齐校验（`src/core/plan.ts`）的判定逻辑是双通道：
+当前 `plan` 对齐校验的判定逻辑是双通道：
 
 1. **explicit covers**：plan frontmatter 里 `covers: [...]` 显式声明覆盖了哪些 spec 条目；
-2. **normalized text match**：plan 正文与 spec 条目做归一化（去空格/标点/大小写）后 `includes` 双向匹配。
+2. **normalized text match**：plan 正文与 spec 条目做归一化后匹配。
 
-判定结果只有 `covered / not-covered` 二元结论，**没有证据**。这带来两个可信度问题：
+判定结果只有二元结论，**没有证据**。两个可信度问题：
 
-- **不可复核（黑箱）**：报告只告诉人"这条覆盖了"，人无法确认"它凭什么判覆盖"，FN（误报漏）无法追溯；
-- **不可度量**：字面命中和语义命中等价，无法区分"精确声明"与"措辞沾边"，FP（误放行）风险无标记。
-
-**本质**：监督器给结论，但拿不出论据——门禁的可信度有天花板。
+- **不可复核（黑箱）**：人无法确认"它凭什么判覆盖"，FN（误报漏）无法追溯；
+- **不可度量**：字面命中与语义命中等价，无法区分"精确声明"与"措辞沾边"，FP（误放行）无标记。
 
 ## 2. 目标与非目标
 
 ### 目标
 
-- 每一项覆盖判定都产出它在 plan 中的**证据位置**（章节定位 / 行号区间 / 一句摘录）；
-- `plan` 命令报告可审计：`✅ 已覆盖 ← 证据：plan.md §2.1 L24-27 "路由守卫用 middleware…"`；
-- 顺带**倒逼 AI 生成 plan 时自我声明证据**（它知道会被追溯，会更忠实）；
-- 为 8.5.2 置信度分层提供**置信度种子**。
+- 每一项覆盖判定产出它在 plan 中的**证据位置**（章节定位 / 行号 / 摘录）；
+- `plan` 命令报告可审计：`✔ 已覆盖 [conf 0.9] ← plan.md §2.1 L24-27 "…"`；
+- 顺带**倒逼 AI 生成 plan 时自我声明证据**；
+- 为 8.5.2 置信度分层提供**置信度种子**；
+- **兑现 FN 可追溯**：未覆盖也给出近失（near-miss）线索。
 
-### 非目标（本方案不做，留给后续演进）
+### 非目标（留给后续演进）
 
-- **不做语义匹配**（那是 `--deep` 可选模式，另立方案）；
-- **不改 `plan.md` 契约格式**（`covers`/`modules` 字段不变，向后兼容）；
-- **不改变门控语义与阈值**（required FP 仍须 100% 覆盖，覆盖才放行）；
-- **不引入任何运行时依赖**（core 保持零依赖，全部自写）。
+- **不做语义匹配**（那是 `--deep`，另立）；
+- **不改 `plan.md` 契约格式**（向后兼容）；
+- **不改变门控语义与阈值**（required 仍须全覆盖才放行；本版 `partial` ⇒ block，8.5.2 再放宽）；
+- **不引入任何运行时依赖**（全部自写）。
 
 ## 3. 核心设计
 
-### 3.1 证据模型（Evidence）
-
-新增 TypeScript 类型（`src/core/types.ts`）：
+### 3.1 证据模型（Evidence）— 已实施
 
 ```ts
-/** 一条覆盖判定的证据 */
-export interface Evidence {
-  /** spec 中目标条目的标识（FP 或 acceptanceCriteria 的索引/文本） */
-  targetId: string;
-  /** 该目标条目的原文 */
+interface Evidence {
+  targetId: string; // 带类型前缀，如 fp:3 / ac:2（唯一可解析）
   targetText: string;
-  /** 判定结论 */
-  status: 'covered' | 'not-covered';
-  /** 匹配置信度 0–1（8.5.2 的种子；本版只输出值，门控仍按 status） */
-  confidence: number;
-  /** 命中的通道 */
-  matchKind: 'explicit-covers' | 'text-match' | 'none';
-  /** 证据位置；not-covered 或 confidence 过低时为 null */
-  source: {
-    /** 定位：`plan.md §<章节> L<起>-<止>`；行号标注"可能随编辑漂移" */
-    location: string;
-    /** 证据摘录（命中段落的关键句，保留上下文窗口） */
-    snippet: string;
-  } | null;
+  status: 'covered' | 'partial' | 'not-covered'; // 三态，支撑 8.5.2
+  needsReview: boolean; // 低置信 / 弱佐证 / 疑似回声时 true
+  confidence: number; // 佐证强度 0–1
+  matchKind: MatchKind[]; // 数组，可表达双通道交叉佐证
+  planRef?: string; // plan 快照锚点（文件 mtime）
+  source: EvidenceSource | null; // 仅"无任何命中"为 null
+  nearMiss?: NearMiss; // 未覆盖时的最近正文段线索
+}
+interface EvidenceSource {
+  section: string;
+  startLine?: number;
+  endLine?: number;
+  snippet: string;
 }
 ```
 
-### 3.2 证据如何产生（在现有双通道上记录命中位置）
+### 3.2 confidence 语义（佐证强度，非单通道可信度）
 
-改造 `src/core/plan.ts` 的判定流程，在命中时**记录位置**而非只返回布尔：
+评审核心修正：**covers 是 AI 自我声明，不可默认给高可信**。两通道作为**交叉佐证信号**：
 
-| 通道              | 判定                                            | 证据                                                                          |
-| ----------------- | ----------------------------------------------- | ----------------------------------------------------------------------------- |
-| `explicit-covers` | frontmatter `covers` 中命中该条目               | 证据 = 命中该 covers 声明项 + frontmatter 位置；`confidence = 1.0`            |
-| `text-match`      | 正文某段落归一化后与目标 `includes`（任一方向） | 证据 = 命中段落（章节 + 行号区间 + 摘录）；`confidence = 0.7`（措辞可能漂移） |
-| 双通道都命中      | 取更高 confidence，可合并                       | 报告标注两路证据                                                              |
-| 都不命中          | `not-covered`                                   | `source = null`，`matchKind = 'none'`，`confidence = 0`                       |
+| 判定组合                                               | 语义             | confidence | status                   |
+| ------------------------------------------------------ | ---------------- | ---------- | ------------------------ |
+| covers + 正文精确命中                                  | 声明被正文佐证   | 0.9        | covered                  |
+| 仅正文精确命中（非回声）                               | 有实质内容       | 0.7        | covered                  |
+| 仅 covers + 正文 near-miss（措辞漂移但正文仍讨论该点） | 弱佐证           | 0.5        | covered，**needsReview** |
+| 仅 covers，正文无任何关联                              | 纯自证，最可疑   | 0.4        | partial，needsReview     |
+| 正文命中但为**回声**（复述目标原文、几无实现内容）     | 形似覆盖实则偏离 | 0.3        | partial，needsReview     |
+| 都未命中                                               | 未覆盖           | 0          | not-covered（+nearMiss） |
 
-### 3.3 行号与段落定位
+**门控**：`covered` 放行（0.5 档需人工确认但通过）；`partial` ⇒ **block**（保守，8.5.2 再放宽）。
 
-- `plan.md` 按行解析，**行号 + 章节名**（`#`/`##`/`###` 标题）双定位；
-- 段落区间：以标题为边界切分，记录 `L起-L止`；
-- 摘录：取命中段落的**首句或关键句**，保留上下文窗口（前后各一句），截断到 ≤ 160 字符，避免断章取义；
-- **行号漂移**：plan 被后续编辑后行号会变——方案：location 以"章节名 + 摘录"为主锚点，行号作为参考，报告标注"行号可能随编辑漂移"。
+### 3.3 段定位（按段切分重构）
 
-### 3.4 置信度种子（为 8.5.2 铺垫）
+- 现状整篇 `includes` 拿不到命中位置 → **改为按 `#`/`##`/`###` 标题切段**，记录 `L起-L止`；
+- **章节名 + 摘录为主锚**，行号仅作参考（`startLine/endLine` 可选），不参与对账；
+- 摘录规则：**命中段首个非空行 + 句界截断 ≤160**（具名常量 `SNIPPET_MAX`），删除非确定性"关键句"。
+- **已知回归**：跨段拼接才命中的目标可能不再命中 → 覆盖率可能微降，属预期内，测试显式断言。
 
-- `explicit-covers` 精确命中 → `1.0`；
-- `text-match`（归一化 includes）→ `0.7`；
-- 部分命中 / 相似但归一化不含 → `0.4`，`source.snippet` 标记 `⚠ 需人工确认`；
-- `not-covered` → `0`。
+### 3.4 回声检测（Echo Detection）
 
-本版**门控仍按 `status`（covered/not-covered）判定**，`confidence` 只输出、不改变放行逻辑（保持向后兼容）；8.5.2 再将其接入门控。
+空/短降级拦不住"长度正常的字面复述"。新增：
 
-### 3.5 报告输出（`plan` 命令增强）
+- 正文命中段归一化后若 `includes(targetNorm)` 且**超出部分 ≤ 6 字符**（`ECHO_FILLER`）→ 判**回声**，非有效证据 → partial 0.3。
+- 这使 8.5.4 的对抗承诺（"凑字面不给方案"）可测。
 
-- 每项目前格式扩展为：
-  `✅ 已覆盖 [conf 1.0] ← 证据 plan.md §2.1 L24-27`
-  `⚠ 未覆盖 ← 建议补到 plan 的"路由守卫"小节`
-- 覆盖率尾部加**证据摘要**（N 条覆盖来自 covers / N 条来自正文命中 / N 条待确认）；
-- `--json` 模式输出结构化 `Evidence[]`（供 CI / 工具消费）。
+### 3.5 near-miss（FN 可追溯）
+
+- 未覆盖项也扫正文，找**归一化重叠度最高**（最长公共子串 ≥3 字符）的段；
+- 报告：`✖ 未覆盖 …（最接近的正文在 §方案 L5 "实现会话过期处理"）`——给人/AI 一个追查入口。
 
 ## 4. 数据流
 
@@ -106,63 +99,51 @@ export interface Evidence {
 spec.md + plan.md
    │
    ▼
-plan.ts 对齐校验（双通道判定）
-   │   每项判定 + 命中位置 + matchKind + confidence
+segmentBody(plan.body) 按标题切段
    ▼
-Evidence[]（types.ts）
+validatePlan：双通道判定 × 每段 → 佐证强度 + 回声检测 + near-miss
    │
-   ├─► renderer：终端报告（证据行 + 摘要）
-   └─► --json：结构化输出（CI / 工具）
+   ▼
+Evidence[]
+   ├─► renderer：证据行（conf + 章节 + 行号 + 摘录）
+   └─► cmdPlan：覆盖率 + 未覆盖/需人工确认 error issue
 ```
 
-## 5. 变更文件清单
+## 5. 变更文件清单（已实施）
 
-| 文件                       | 变更                                                           |
-| -------------------------- | -------------------------------------------------------------- |
-| `src/core/types.ts`        | 新增 `Evidence` 类型                                           |
-| `src/core/plan.ts`         | 判定时记录命中位置 / matchKind / confidence，返回 `Evidence[]` |
-| `src/core/renderer.ts`     | 报告输出证据行 + 摘要；`--json` 结构化序列化                   |
-| `src/cli/commands.ts`      | `plan` 命令解析 `--json`，透传渲染                             |
-| `src/core/templates.ts`    | plan 生成指令追加"请在每个模块写明证据锚点"（可选，倒逼自证）  |
-| `test/plan.test.ts`        | 证据断言：explicit / text / none 三态 + 行号 + confidence      |
-| `test/renderer.test.ts`    | 报告格式 + `--json` 结构                                       |
-| `test/adversarial.test.ts` | （配合 8.5.4）"只字面复述 FP 无方案"应判 not-covered 或低置信  |
+| 文件                   | 变更                                                                                |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| `src/types.ts`         | 新增 `Evidence` / `EvidenceStatus` / `MatchKind` / `EvidenceSource` / `NearMiss`    |
+| `src/core/plan.ts`     | 段切分 `segmentBody`、双通道佐证 confidence、回声检测、near-miss、产出 `Evidence[]` |
+| `src/core/renderer.ts` | `renderEvidenceLine`：证据行（conf + 位置 + 摘录 + near-miss）                      |
+| `src/cli/commands.ts`  | `cmdPlan` 用证据渲染；`planRef` 取 plan 文件 mtime                                  |
+| `test/plan.test.ts`    | 三态 / 段定位 / 回声 / near-miss / 双通道佐证 / planRef                             |
+
+> `--json` 结构化输出、templates 倒逼自证、partial 接入门控 → **v0.3**（评审建议，类型已定好）。
 
 ## 6. 测试策略
 
-- **explicit covers**：证据指向 covers 声明项，confidence 1.0；
-- **text-match 兜底**：正文命中段落，证据摘录正确、行号区间正确；
-- **未覆盖**：source 为 null，matchKind none；
-- **行号区间**：多章节、跨行段落定位正确；
-- **`--json`**：输出合法 JSON 且含全部 Evidence 字段；
-- **adversarial 种子**：构造"只在正文复述 FP 原文、不给任何实现方案"的 plan——应判 not-covered 或低置信（防止"凑字面"糊弄）。
+- explicit covers 仅声明无正文 → partial 0.4 block；
+- covers + 正文精确命中 → covered 0.9，`matchKind` 双通道；
+- covers + 正文 near-miss → covered 0.5 needsReview；
+- 正文精确命中（非回声）→ covered 0.7；
+- 回声（正文复述原文）→ partial 0.3；
+- 未覆盖 → not-covered，`source=null`，近失段带 `nearMiss`；
+- 段定位 / 行号区间 / 摘录句界截断 / `planRef`。
 
 ## 7. 风险与权衡
 
-| 风险                                                            | 缓解                                           |
-| --------------------------------------------------------------- | ---------------------------------------------- |
-| **证据"伪造"**：AI 在 plan 里写"见 spec"而无实质内容 → 证据为空 | 空/过短摘录 → confidence 降级 + 标记需人工确认 |
-| **行号漂移**：plan 编辑后行号失准                               | 以"章节名 + 摘录"为主锚，行号标参考 + 警告     |
-| **摘录断章取义**                                                | 保留上下文窗口（前后各一句）                   |
-| **破坏向后兼容**                                                | 契约不改、门控仍按 status；证据是**增量输出**  |
-| **引入依赖**                                                    | 全部自写，零新增依赖                           |
+| 风险                                             | 缓解                                                                 |
+| ------------------------------------------------ | -------------------------------------------------------------------- |
+| **证据"伪造"**：AI 在 plan 里"见 spec"无实质内容 | 回声检测 + 仅 covers 无佐证 → partial block                          |
+| **行号漂移**                                     | 章节 + 摘录为主锚，行号仅参考                                        |
+| **摘录断章取义**                                 | 首行 + 句界截断                                                      |
+| **破坏向后兼容**                                 | 契约不改；证据是增量输出；门控语义等价（原"覆盖才过"仍成立，仅更严） |
+| **引入依赖**                                     | 全部自写，零新增依赖                                                 |
 
-## 8. 实施步骤（分阶段）
+## 8. 待办（后续演进，见 PROPOSAL §8.5）
 
-1. `types.ts` 加 `Evidence` 模型；
-2. `plan.ts` 双通道判定记录命中位置，产出 `Evidence[]`；
-3. `renderer.ts` 报告输出证据行 + 摘要；
-4. `commands.ts` 支持 `--json` 结构化输出；
-5. 测试补齐（正常三态 + 行号 + `--json` + adversarial 种子）；
-6. 文档落地：PROPOSAL §8.5.1 状态更新 + CHANGELOG。
-
----
-
-## 待评审问题（给 review 的重点）
-
-1. 证据模型是否遗漏关键字段（是否够支撑 8.5.2 置信度分层）？
-2. 双通道命中时"取更高 confidence / 合并"是否合理？
-3. "行号 + 章节"双定位 vs 仅"章节 + 摘录"，是否过度设计？
-4. 空/短证据的降级策略是否足以防"凑字面糊弄"？
-5. 证据摘录截断策略（160 字符 + 上下文窗口）是否合适？
-6. 是否有更轻的落地路径，能把证据链尽快交付而不引入新复杂度？
+1. 8.5.2 置信度分层：`partial` 接入门控（不再一律 block）；
+2. `--json` 结构化输出（类型已定）；
+3. 8.5.4 对抗测试全集；
+4. `--deep` 语义对齐（可选模式）。
