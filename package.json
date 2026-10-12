@@ -1,6 +1,6 @@
 {
   "name": "speculor-ai",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "A zero-dependency, type-safe spec-driven development toolkit: turn ideas into machine-checkable specs, and specs into verifiable checklists for any coding agent.",
   "type": "module",
   "bin": {
