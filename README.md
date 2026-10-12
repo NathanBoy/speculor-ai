@@ -244,6 +244,7 @@ npx speculor-ai check      # ✔ 生成验收清单
 ## 文档
 
 - [技术提案（PROPOSAL.md）](./PROPOSAL.md) — 定位、架构、对齐校验算法、里程碑
+- [ROADMAP.md](./ROADMAP.md) — 公开路线图
 - [CHANGELOG.md](./CHANGELOG.md)
 - [CONTRIBUTING.md](./CONTRIBUTING.md) — 开发流程 + 四项设计原则
 - [SECURITY.md](./SECURITY.md) — 漏洞报告政策
