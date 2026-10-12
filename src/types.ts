@@ -77,3 +77,58 @@ export interface ValidateOptions {
    */
   allowPending?: boolean;
 }
+
+/* ---------------------------------------------------------------------------
+ * Evidence chain (PROPOSAL §8.5.1)
+ * Each coverage judgement for a spec target carries an auditable location in
+ * the plan, so the alignment gate is verifiable instead of a black box.
+ * ------------------------------------------------------------------------- */
+
+/** Which detection channel contributed to a judgement. */
+export type MatchKind = 'explicit-covers' | 'text-match';
+
+/** Coverage judgement for a single spec target. */
+export type EvidenceStatus = 'covered' | 'partial' | 'not-covered';
+
+/** Where in the plan a piece of evidence lives. */
+export interface EvidenceSource {
+  /** Section heading (primary anchor — survives most edits). */
+  section: string;
+  /** Line range (best-effort reference only, may drift after edits). */
+  startLine?: number;
+  endLine?: number;
+  /** A snippet of the matched text (first sentence, sentence-bounded). */
+  snippet: string;
+}
+
+/** A "closest but not matched" hint, so false negatives stay traceable. */
+export interface NearMiss {
+  section: string;
+  startLine?: number;
+  endLine?: number;
+  snippet: string;
+}
+
+/**
+ * Auditable evidence for one spec target's coverage judgement.
+ * `source` is null only when no channel hit at all (a real not-covered).
+ */
+export interface Evidence {
+  /** Identity with a type prefix, e.g. `fp:3` / `ac:2` (uniquely resolvable). */
+  targetId: string;
+  /** The target's original text. */
+  targetText: string;
+  status: EvidenceStatus;
+  /** True when a human should confirm before trusting this judgement. */
+  needsReview: boolean;
+  /** Corroboration strength in [0, 1] (see PROPOSAL §8.5.1/8.5.2). */
+  confidence: number;
+  /** Channels that contributed (array — can express corroboration). */
+  matchKind: MatchKind[];
+  /** Optional plan snapshot anchor (e.g. file mtime) for auditability. */
+  planRef?: string;
+  /** Present iff at least one channel hit. */
+  source: EvidenceSource | null;
+  /** Present iff not-covered and a close-but-not-matched segment exists. */
+  nearMiss?: NearMiss;
+}

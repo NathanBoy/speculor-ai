@@ -1,4 +1,4 @@
-import type { Priority, SpecDoc } from '../types.js';
+import type { Priority, SpecDoc, Evidence } from '../types.js';
 
 /**
  * Rendering of human- and agent-readable artifacts: acceptance checklists and
@@ -46,4 +46,26 @@ export function colorize(enabled: boolean): ReportStyle {
     dim: '\u001b[2m',
     reset: '\u001b[0m',
   };
+}
+
+/**
+ * Render one line of the `plan` alignment report from an evidence record:
+ * the verdict, its corroboration confidence, and (when present) the auditable
+ * location + snippet in the plan. `section + snippet` is the primary anchor;
+ * the line range is a best-effort reference only.
+ */
+export function renderEvidenceLine(e: Evidence): string {
+  const tag =
+    e.status === 'covered' ? '✔ 已覆盖' : e.status === 'partial' ? '⚠ 需人工确认' : '✖ 未覆盖';
+  const conf = `[conf ${e.confidence.toFixed(1)}]`;
+  let line = `  ${tag} ${conf}: ${e.targetText}`;
+  if (e.source) {
+    const loc = `${e.source.section}${e.source.startLine ? ` L${e.source.startLine}${e.source.endLine && e.source.endLine !== e.source.startLine ? `-${e.source.endLine}` : ''}` : ''}`;
+    line += ` ← ${loc} "${e.source.snippet}"`;
+  }
+  if (e.nearMiss) {
+    const loc = `${e.nearMiss.section}${e.nearMiss.startLine ? ` L${e.nearMiss.startLine}` : ''}`;
+    line += ` （最接近的正文在 ${loc} "${e.nearMiss.snippet}"，但归一化未命中）`;
+  }
+  return line;
 }

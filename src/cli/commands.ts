@@ -1,4 +1,4 @@
-import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { SPECDEV_DIR, SPECS_DIR, CHANGES_DIR } from '../core/loader.js';
 import type { SpecDoc } from '../types.js';
@@ -6,7 +6,7 @@ import { parseSpecDoc, loadAllSpecs } from '../core/loader.js';
 import { validateAll, hasBlockingErrors } from '../core/validator.js';
 import { parsePlanDoc, validatePlan } from '../core/plan.js';
 import { parseTasks, validateTasks } from '../core/tasks.js';
-import { renderChecklist } from '../core/renderer.js';
+import { renderChecklist, renderEvidenceLine } from '../core/renderer.js';
 import { initTemplates, newSpecTemplate, planPrompt, tasksPrompt } from '../core/templates.js';
 
 /**
@@ -140,13 +140,16 @@ export async function cmdPlan(
     return 1;
   }
   const plan = parsePlanDoc(join(change.dir, 'plan.md'), planContent);
+  try {
+    plan.planRef = (await stat(join(change.dir, 'plan.md'))).mtime.toISOString();
+  } catch {
+    /* planRef is a best-effort audit anchor */
+  }
   const r = validatePlan(plan, spec);
   const pct = Math.round(r.coverage * 100);
-  for (const t of r.targets) {
-    ctx.out(`  ${t.covered ? '✔ 已覆盖' : '⚠ 未覆盖'}: ${t.text}`);
-  }
+  for (const ev of r.evidence) ctx.out(renderEvidenceLine(ev));
   ctx.out(
-    `── 覆盖率 ${pct}%（${r.targets.filter((t) => t.covered).length}/${r.targets.length}）──`,
+    `── 覆盖率 ${pct}%（${r.evidence.filter((e) => e.status === 'covered').length}/${r.evidence.length}）──`,
   );
   for (const i of r.issues) ctx.out(`✖ ERROR ${i.message}`);
   return r.issues.some((i) => i.severity === 'error') ? 1 : 0;
